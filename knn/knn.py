@@ -23,13 +23,13 @@ class KNN(object):
                 diff = x - xt
                 dist = diff.dot(diff)
                 if len(sl) < self.k:
-                    sl.add(self.y[j])
+                    sl.add((dist, self.y[j]))
                 else:
                     if dist < sl[-1][0]:
                         del sl[-1]
-                        sl.add(self.y[j])
+                        sl.add((dist, self.y[j]))
 
-            counts = Counter(sl)
+            counts = Counter([label for dist, label in sl])
             pred[i] = counts.most_common()[0][0]
         return pred
 

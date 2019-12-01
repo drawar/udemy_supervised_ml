@@ -4,8 +4,8 @@ import pandas as pd
 
 def get_data(limit=None):
     print("Reading in and transforming data...")
-    df = pd.read_csv("../data/train.csv")
-    data = df.as_matrix()
+    df = pd.read_csv("data/train.csv")
+    data = df.values
     np.random.shuffle(data)
     X = data[:, 1:] / 255.0
     Y = data[:, 0]
