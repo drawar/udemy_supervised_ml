@@ -1,0 +1,4 @@
+.flake8
+.pre-commit-config.yaml
+.vscode/
+pyproject.toml
