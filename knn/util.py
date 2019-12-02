@@ -2,9 +2,9 @@ import numpy as np
 import pandas as pd
 
 
-def get_data(limit=None):
+def get_mnist_data(limit=None):
     print("Reading in and transforming data...")
-    df = pd.read_csv("data/train.csv")
+    df = pd.read_csv("data/mnist.csv")
     data = df.values
     np.random.shuffle(data)
     X = data[:, 1:] / 255.0
@@ -12,6 +12,12 @@ def get_data(limit=None):
     if limit is not None:
         X, Y = X[:limit], Y[:limit]
     return X, Y
+
+
+def get_social_network_data():
+    print("Reading in and transforming data...")
+    df = pd.read_csv("data/social_network.csv")
+    return df
 
 
 def get_xor():
