@@ -4,7 +4,7 @@ from datetime import datetime
 from sortedcontainers import SortedList
 import numpy as np
 
-from util import get_data
+from util import get_mnist_data
 
 
 class KNN(object):
@@ -21,14 +21,13 @@ class KNN(object):
             sl = SortedList()
             for j, xt in enumerate(self.X):
                 diff = x - xt
-                dist = diff.dot(diff)
+                dist = np.sqrt(diff.dot(diff))
                 if len(sl) < self.k:
                     sl.add((dist, self.y[j]))
                 else:
                     if dist < sl[-1][0]:
                         del sl[-1]
                         sl.add((dist, self.y[j]))
-
             counts = Counter([label for dist, label in sl])
             pred[i] = counts.most_common()[0][0]
         return pred
@@ -39,7 +38,7 @@ class KNN(object):
 
 
 if __name__ == "__main__":
-    X, Y = get_data(2000)
+    X, Y = get_mnist_data(2000)
     Ntrain = 1000
     Xtrain, Ytrain = X[:Ntrain], Y[:Ntrain]
     Xtest, Ytest = X[Ntrain:], Y[Ntrain:]
@@ -52,3 +51,8 @@ if __name__ == "__main__":
 
         t0 = datetime.now()
         print(f"Train accuracy: {knn.score(Xtrain, Ytrain)}")
+        print("Time to compute train accuracy:", (datetime.now() - t0), "Train size:", len(Ytrain))
+
+        t0 = datetime.now()
+        print(f"Test accuracy: {knn.score(Xtest, Ytest)}")
+        print("Time to compute test accuracy:", (datetime.now() - t0), "Test size:", len(Ytest))

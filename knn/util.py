@@ -2,10 +2,11 @@ import numpy as np
 import pandas as pd
 
 
-def get_mnist_data(limit=None):
+def get_mnist_data(limit=None, seed=0):
     print("Reading in and transforming data...")
     df = pd.read_csv("data/mnist.csv")
     data = df.values
+    np.random.seed(seed)
     np.random.shuffle(data)
     X = data[:, 1:] / 255.0
     Y = data[:, 0]

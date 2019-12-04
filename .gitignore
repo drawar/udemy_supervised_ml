@@ -2,3 +2,5 @@
 .pre-commit-config.yaml
 .vscode/
 pyproject.toml
+**/.ipynb_checkpoints
+**/*.csv
