@@ -1,7 +1,7 @@
 from collections import Counter
 from datetime import datetime
 
-from scipy.spatial import distance
+from sortedcontainers import SortedList
 import numpy as np
 
 from util import get_mnist_data
@@ -16,14 +16,20 @@ class KNN(object):
         self.y = y
 
     def predict(self, X):
-        dist = distance.cdist(self.X, X, 'euclidean')
         pred = np.zeros(len(X))
-        label = self.y[np.argsort(dist, axis=0)[:self.k]]
-
-        for i, label_t in enumerate(label.T):
-            unique, idx, counts = np.unique(np.array(label_t), return_counts=True, return_index=True)
-            mode_idx = counts == np.max(counts)
-            pred[i] = unique[mode_idx][idx[mode_idx] == np.min(idx[mode_idx])][0]
+        for i, x in enumerate(X):
+            sl = SortedList()
+            for j, xt in enumerate(self.X):
+                diff = x - xt
+                dist = np.sqrt(diff.dot(diff))
+                if len(sl) < self.k:
+                    sl.add((dist, self.y[j]))
+                else:
+                    if dist < sl[-1][0]:
+                        del sl[-1]
+                        sl.add((dist, self.y[j]))
+            counts = Counter([label for dist, label in sl])
+            pred[i] = counts.most_common()[0][0]
         return pred
 
     def score(self, X, y):
@@ -45,8 +51,18 @@ if __name__ == "__main__":
 
         t0 = datetime.now()
         print(f"Train accuracy: {knn.score(Xtrain, Ytrain)}")
-        print("Time to compute train accuracy:", (datetime.now() - t0), "Train size:", len(Ytrain))
+        print(
+            "Time to compute train accuracy:",
+            (datetime.now() - t0),
+            "Train size:",
+            len(Ytrain),
+        )
 
         t0 = datetime.now()
         print(f"Test accuracy: {knn.score(Xtest, Ytest)}")
-        print("Time to compute test accuracy:", (datetime.now() - t0), "Test size:", len(Ytest))
+        print(
+            "Time to compute test accuracy:",
+            (datetime.now() - t0),
+            "Test size:",
+            len(Ytest),
+        )
